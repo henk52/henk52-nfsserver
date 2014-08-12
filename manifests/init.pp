@@ -42,6 +42,17 @@ class nfsserver (
 file { '/etc/exports':
   ensure  => present,
   content => template('/etc/puppet/modules/nfsserver/templates/etc_exports.erb'),
+  notify  => Service [ 'nfs-server' ],
+}
+
+package { 'nfs-utils':
+  ensure => present,
+}
+
+service { 'nfs-server':
+  ensure => running,
+  enable => true,
+  require => Package [ 'nfs-utils' ],
 }
 
 }
