@@ -35,7 +35,13 @@
 #
 # Copyright 2014 Your name here, unless otherwise noted.
 #
-class nfsserver {
+class nfsserver (
+  $hohNfsExports
+) {
 
+file { '/etc/exports':
+  ensure  => present,
+  content => template('/etc/puppet/modules/nfsserver/templates/etc_exports.erb'),
+}
 
 }
