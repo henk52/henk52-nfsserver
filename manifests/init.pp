@@ -43,9 +43,30 @@ case $operatingsystem {
   CentOS: {
             # TODO if this is 7.0 then it might be the same as for Fedora.
             $NfsServerServiceName = 'nfs'
+            package { 'rpcbind':
+              ensure => present,
+            }
+            service { 'rpcbind':
+              ensure => running,
+              enable => true,
+              require => Package [ 'rpcbind' ],
+            }
+            service { "$NfsServerServiceName":
+              ensure => running,
+              enable => true,
+              require => [
+                           Package [ 'nfs-utils' ],
+                           Service [ 'rpcbind' ],
+                         ],
+            }
           }
   Fedora: {
             $NfsServerServiceName = 'nfs-server'
+            service { "$NfsServerServiceName":
+              ensure => running,
+              enable => true,
+              require => Package [ 'nfs-utils' ],
+            }
           }
   default: { fail("Unrecognized operating system for nfsserver") }
 }
@@ -60,10 +81,5 @@ package { 'nfs-utils':
   ensure => present,
 }
 
-service { "$NfsServerServiceName":
-  ensure => running,
-  enable => true,
-  require => Package [ 'nfs-utils' ],
-}
 
 }
