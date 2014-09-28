@@ -53,7 +53,7 @@ case $operatingsystem {
 file { '/etc/exports':
   ensure  => present,
   content => template('/etc/puppet/modules/nfsserver/templates/etc_exports.erb'),
-  notify  => Service [ 'nfs-server' ],
+  notify  => Service [ "$NfsServerServiceName" ],
 }
 
 package { 'nfs-utils':
