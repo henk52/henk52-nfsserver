@@ -4,11 +4,34 @@ henk52-nfsserver
 Pupper module for administrating an NFS server.
 nfsserver
 
+Supports Centos 6.5 and Fedora 20.
+
 This is the nfsserver module.
 
 
 Verify installation:
   showmount -e localhost
+
+# The directories are expected to have been created.
+
+$szDefaultNfsOptionList =  'ro,no_root_squash'
+$szDefaultNfsClientList = hiera ( 'DefaultNfsClientList', '10.1.2.0/255.255.255.0' )
+$szBaseDirectory = '/var'
+
+$hNfsExports = {
+ "$szBaseDirectory/configs" => {
+             'NfsOptionList' => "$szDefaultNfsOptionList",
+             'NfsClientList' => "$szDefaultNfsClientList",
+                               }, 
+ "$szBaseDirectory/files" => {
+             'NfsOptionList' => "$szDefaultNfsOptionList",
+             'NfsClientList' => "$szDefaultNfsClientList",
+                             }, 
+}
+
+class { 'nfsserver':
+   hohNfsExports => $hNfsExports,
+}
 
 
 

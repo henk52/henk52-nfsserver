@@ -39,6 +39,17 @@ class nfsserver (
   $hohNfsExports
 ) {
 
+case $operatingsystem {
+  CentOS: {
+            # TODO if this is 7.0 then it might be the same as for Fedora.
+            $NfsServerServiceName = 'nfs'
+          }
+  Fedora: {
+            $NfsServerServiceName = 'nfs-server'
+          }
+  default: { fail("Unrecognized operating system for nfsserver") }
+}
+
 file { '/etc/exports':
   ensure  => present,
   content => template('/etc/puppet/modules/nfsserver/templates/etc_exports.erb'),
@@ -49,7 +60,7 @@ package { 'nfs-utils':
   ensure => present,
 }
 
-service { 'nfs-server':
+service { "$NfsServerServiceName":
   ensure => running,
   enable => true,
   require => Package [ 'nfs-utils' ],
