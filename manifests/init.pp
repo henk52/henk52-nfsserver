@@ -23,9 +23,31 @@
 #
 # === Examples
 #
-#  class { nfsserver:
-#    servers => [ 'pool.ntp.org', 'ntp.local.company.com' ],
-#  }
+#
+#
+# $szKickStartBaseDirectory = hiera('KickStartBaseDirectory', '/var/ks')
+#
+# $szDefaultNfsOptionList =  'ro,no_root_squash'
+# $szDefaultNfsClientList = hiera ( 'DefaultNfsClientList' )
+#
+# $hNfsExports = {
+#  "$szKickStartBaseDirectory/configs" => {
+#              'NfsOptionList' => "$szDefaultNfsOptionList",
+#              'NfsClientList' => "$szDefaultNfsClientList",
+#                                         }, 
+#  "$szKickStartBaseDirectory" => {
+#              'NfsOptionList' => "$szDefaultNfsOptionList",
+#              'NfsClientList' => "$szDefaultNfsClientList",
+#                                         }, 
+#  "$szKickStartImageDirectory" => {
+#              'NfsOptionList' => "$szDefaultNfsOptionList",
+#              'NfsClientList' => "$szDefaultNfsClientList",
+#                                         }, 
+# }
+# 
+# class { 'nfsserver':
+#    hohNfsExports => $hNfsExports,
+# }
 #
 # === Authors
 #
