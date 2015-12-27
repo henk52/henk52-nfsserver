@@ -84,12 +84,31 @@ case $operatingsystem {
           }
   'Fedora': {
             $szNfsServerServiceName = 'nfs-server'
-            service { "$szNfsServerServiceName":
-              ensure => running,
-              enable => true,
-              require => Package[ 'nfs-utils' ],
-            }
-          }
+            if  $operatingsystemmajrelease+0 >= 22  {
+              package { 'rpcbind':
+                ensure => present,
+              }
+              service { 'rpcbind':
+                ensure => running,
+                enable => true,
+                require => Package[ 'rpcbind' ],
+              }
+              service { "$szNfsServerServiceName":
+                ensure => running,
+                enable => true,
+                require => [
+                           Package[ 'nfs-utils' ],
+                           Service[ 'rpcbind' ],
+                           ],
+              }
+            } else {
+              service { "$szNfsServerServiceName":
+                ensure => running,
+                enable => true,
+                require => Package[ 'nfs-utils' ],
+              }
+            } # end else
+          } # end fedora.
   default: { fail("!!! Unrecognized operating system '$operatingsystem' for nfsserver") }
 }
 
