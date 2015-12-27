@@ -62,41 +62,41 @@ class nfsserver (
 ) {
 
 case $operatingsystem {
-  CentOS: {
+  'CentOS': {
             # TODO if this is 7.0 then it might be the same as for Fedora.
-            $NfsServerServiceName = 'nfs'
+            $szNfsServerServiceName = 'nfs'
             package { 'rpcbind':
               ensure => present,
             }
             service { 'rpcbind':
               ensure => running,
               enable => true,
-              require => Package [ 'rpcbind' ],
+              require => Package[ 'rpcbind' ],
             }
-            service { "$NfsServerServiceName":
+            service { "$szNfsServerServiceName":
               ensure => running,
               enable => true,
               require => [
-                           Package [ 'nfs-utils' ],
-                           Service [ 'rpcbind' ],
+                           Package[ 'nfs-utils' ],
+                           Service[ 'rpcbind' ],
                          ],
             }
           }
-  Fedora: {
-            $NfsServerServiceName = 'nfs-server'
-            service { "$NfsServerServiceName":
+  'Fedora': {
+            $szNfsServerServiceName = 'nfs-server'
+            service { "$szNfsServerServiceName":
               ensure => running,
               enable => true,
-              require => Package [ 'nfs-utils' ],
+              require => Package[ 'nfs-utils' ],
             }
           }
-  default: { fail("Unrecognized operating system for nfsserver") }
+  default: { fail("!!! Unrecognized operating system '$operatingsystem' for nfsserver") }
 }
 
 file { '/etc/exports':
   ensure  => present,
   content => template('/etc/puppet/modules/nfsserver/templates/etc_exports.erb'),
-  notify  => Service [ "$NfsServerServiceName" ],
+  notify  => Service[ "$szNfsServerServiceName" ],
 }
 
 package { 'nfs-utils':
